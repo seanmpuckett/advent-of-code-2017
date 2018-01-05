@@ -1,0 +1,67 @@
+object Advent23VM 1.0.0
+  
+Instantiate task as program
+  set 
+    @pc 0
+    @state 'ok'
+    @registers: p core
+    @program to copy program
+    @multiplies 0
+
+  set label empty
+  each program
+    if (.0.split('') last) = ':'
+      set label[.0] number key
+      .shift
+  each program
+    if ?.2 and (.2.split('') last) = ':'
+      if label[.2]
+        set .2 trial - (number key)
+      else
+        assert false, "Unknown label ${.2}"
+        
+Value task as operand
+  with number operand
+    return . ?? . :: @registers[operand] default 0
+
+SetValue task as register, value
+  set @registers[register] value
+
+Step task
+
+  with @program[@pc]
+    switch .0
+      case 'set'
+        set @registers[.1] @Value(.2)
+      case 'sub'
+        set @registers[.1] to (self default 0) - @Value(.2)
+      case 'add'
+        set @registers[.1] to (self default 0) + @Value(.2)
+      case 'mod'
+        set @registers[.1] to (self default 0) % @Value(.2)
+      case 'sqrt'
+        set @registers[.1] to ~Math.floor(~Math.sqrt(@Value(.2)))
+      case 'mul'
+        inc @multiplies
+        set @registers[.1] to (self default 0) * @Value(.2)
+      case 'jnz'
+        if @Value(.1) != 0
+          set @pc (self + @Value(.2))-1
+      case 'jz'
+        if @Value(.1) = 0
+          set @pc (self + @Value(.2))-1
+      case 'halt'
+        set @state 'halt'
+      case 'debug'
+        debug "${.1} - ${@Value(.2)}"
+        
+  inc @pc
+
+  if @pc >= @program.length
+    set @state 'halt'
+        
+
+    
+  
+
+    

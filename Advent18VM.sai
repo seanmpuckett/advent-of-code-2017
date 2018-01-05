@@ -1,0 +1,56 @@
+object Advent18VM 1.0.0
+  
+Instantiate task as program, core
+  set 
+    @pc 0
+    @state 'ok'
+    @core core
+    @registers: p core
+    @rcvqueue empty
+    @program to copy program
+    @sends 0
+
+Link task as vm
+  set @sndqueue vm.rcvqueue
+
+Value task as operand
+  with number operand
+    return . ?? . :: @registers[operand] default 0
+
+Step task
+
+  if @state = 'halt'
+    return
+
+  with @program[@pc]
+    switch .0
+      case 'snd'
+        @sndqueue.push @Value(.1)
+        inc @sends 
+      case 'set'
+        set @registers[.1] @Value(.2)
+      case 'add'
+        set @registers[.1] to (self default 0) + @Value(.2)
+      case 'mul'
+        set @registers[.1] to (self default 0) * @Value(.2)
+      case 'mod'
+        set @registers[.1] to (self default 0) % @Value(.2)
+      case 'rcv'
+        if @rcvqueue.length
+          set @state 'ok'
+          set @registers[.1] from @rcvqueue.shift
+        else
+          set @state 'wait'
+          return
+      case 'jgz'
+        if @Value(.1) > 0
+          set @pc (self + @Value(.2))-1
+  
+  inc @pc
+
+  if @pc<0 or @pc>=@program.length
+    set @state 'halt'
+    
+  
+
+    

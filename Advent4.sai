@@ -1,0 +1,50 @@
+object Advent4 1.0.0
+
+inherit: 'Advent'
+
+Instantiate task
+
+  set source from @ReadFile 'Advent4.txt'
+
+  set 
+    valid to 0
+    rows to source.split(/[\r\n]+/)
+  
+  each rows
+    set 
+      pass to 1
+      dup to ''
+    each .split(/\s/) by asc has .length>0
+      if dup is it
+        set pass to 0
+        break
+      set dup to it
+    set valid + pass
+    
+  debug "Part 1: ${valid}"
+
+  // part 2
+  
+  set valid to 0
+  each rows
+    set 
+      pass to 1
+      dup to ''
+      phrase to chain .
+        split /\s/
+        has .length>0
+        thru chain .
+          split ''
+          by asc
+          join ''
+        by asc
+      
+    each phrase
+      if dup is .
+        set pass to 0
+        break
+      set dup to .
+    set valid + pass
+    
+  debug "Part 2: ${valid}"
+    

@@ -1,0 +1,59 @@
+object Advent21 1.0.0
+
+inherit: 'Advent'
+
+Instantiate task
+
+  set 
+    rules blank
+  
+  chain @ReadFile('Advent21.txt') 
+    split /\r|\n/
+    thru .split(' => ')
+    thru
+      set rule to .0.replace(/\//g,'')
+      set result to .1.split(/\//)
+      if rule.length=4
+        count 2
+          set rule to rule.split('') set (array .2, .3, .0, .1).join('') // flip
+          count 4
+            set rule to rule.split('') set (array .2, .0, .3, .1).join('') // rotate
+            set rules[rule] to result
+      else
+        count 2
+          set rule to rule.split('') set (array .6, .7, .8, .3, .4, .5, .0, .1, .2).join('')
+          count 4
+            set rule to rule.split('') set (array .6, .3, .0, .7, .4, .1, .8, .5, .2).join('')
+            set rules[rule] to result
+    
+  set newgrid:
+     '.#.'
+     '..#'
+     '###'
+
+  count 18
+    set
+      grid newgrid
+      newgrid empty
+      size grid[0].length
+      span (size % 2)+2    // 2 or 3
+      scale (span+1)/span 
+
+    count size*scale
+      newgrid.push empty
+      
+    count size step span as y
+      count size step span as x
+        if span=2
+          set rule to grid[y].substr(x,2)+grid[y+1].substr(x,2)
+        else 
+          set rule to grid[y].substr(x,3)+grid[y+1].substr(x,3)+grid[y+2].substr(x,3)
+        ply rules[rule]
+          newgrid[(y*scale)+key].push .
+        else
+          debug "NO RULE FOR ${rule}"
+    
+    set newgrid self thru .join('')
+    
+    debug "Round ${counter+1} (size: ${newgrid[0].length}): ${(newgrid thru .split('') has . is '#' count) into 0 sum + .}"
+      

@@ -1,0 +1,49 @@
+object Advent23 1.0.0
+
+inherit: 'Advent'
+
+Instantiate task
+
+  set 
+    programstock to (@ReadFileLines('Advent23.txt') has .length > 0) thru .replace(/^\s+/,'').split(/\s+/)
+    programmod to (@ReadFileLines('Advent23mod.txt') has .length > 0) thru .replace(/^\s+/,'').split(/\s+/)
+    
+  set vm create 'Advent23VM' programstock
+
+  while vm.state is 'ok'
+    vm.Step
+      
+  debug "Part 1: ${vm.multiplies}"
+  
+  set PrimeTest task as v
+    set 
+      t 2
+      max ~Math.sqrt(v)
+    while t<max
+      unless v % t
+        return false
+      inc t
+    return true
+    
+  set
+    prime 0
+    notprime 0
+    
+  count 106700 to 123701 step 17
+    if PrimeTest(counter)
+      inc prime
+    else
+      inc notprime
+
+  debug "Part 2a: ${notprime} -- check value for my puzzle"
+  
+  set vm create 'Advent23VM' programmod
+  vm.SetValue 'a', 1
+  
+  set cycles 0
+  while vm.state='ok'
+    inc cycles
+    vm.Step
+
+  debug "Part 2b: ${vm.Value('h')} -- calculated result with modified VM"
+    

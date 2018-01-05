@@ -1,0 +1,38 @@
+object Advent24 1.0.0
+
+inherit: 'Advent'
+
+Instantiate task
+
+  set
+    parts blank                                     // {pins: [[ pin 1, pin 2, used ]] }
+    strongest 0
+    longest 0
+    chains 0
+  
+  chain @ReadFileLines('Advent24.txt')              // get array of lines
+    has .length > 0                                 // filter to non-empty lines
+    thru chain .                                    // for each line...
+      split '/'                                     // split on slash  
+      thru number .                                 // convert text array to numeric array
+    thru fields left .0, right .1, busy false       // convert to fields for readability
+    audit                                           // for each line (now an array of pin objects)
+      set parts[.left] concat .                     // add part to parts list for left side pin count
+      if .left != .right                            // if right pin count is different
+        set parts[.right] concat .                  //   add part to list for right side pin count 
+                                                    //   (a second reference to the same object)
+        
+  set GetChains task as pins, value, length  
+    set strongest ?> value                          // ?> is a "max" operator
+    set longest ?> (length + (value/100000))       
+    each parts[pins] 
+      unless .busy
+        set .busy true                      
+        GetChains (.left != pins ?? .left :: .right), (value + .left + .right), length+1 
+        set .busy false                     
+
+  @Time task
+    GetChains 0, 0, 0                                 // start connections at zero pin
+
+  debug "Part 1: ${strongest}"
+  debug "Part 2: ${longest}"

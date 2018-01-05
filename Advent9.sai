@@ -1,0 +1,40 @@
+object Advent9 1.0.0
+
+inherit: 'Advent'
+
+Instantiate task
+  
+  set input to @ReadFile('Advent9.txt')
+  
+  set 
+    tokens to input.split('')
+    result1 to 0
+    result2 to 0
+    depth to 0
+    garbage to false
+    escape to false
+
+  each tokens
+    if escape
+      set escape to false
+      continue
+    unless garbage
+      switch .
+        case '{'
+          inc depth
+        case '}'
+          set result1 + depth
+          dec depth
+        case '<'
+          set garbage to true
+    else
+      switch .
+        case '!'
+          set escape to true
+        case '>'
+          set garbage to false
+        default
+          inc result2
+
+  debug "Part 1: ${result1}"
+  debug "Part 2: ${result2}"

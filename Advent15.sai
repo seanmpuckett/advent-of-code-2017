@@ -1,0 +1,80 @@
+reference:
+  FS require('fs')
+
+object Advent15 1.0.0
+
+
+Instantiate task
+
+  set 
+    Astart 679
+    Bstart 771
+    Afactor 16807
+    Bfactor 48271
+
+  set
+    Avalue Astart 
+    Bvalue Bstart
+    pass 0
+    
+  count 40000000
+    set Avalue ( self * Afactor ) % 2147483647
+    set Bvalue ( self * Bfactor ) % 2147483647
+    if (Avalue andb 65535) = (Bvalue andb 65535)
+      inc pass
+      
+  debug "Part 1: ${pass}"
+  
+  set
+    Avalue Astart
+    Bvalue Bstart
+    pass 0
+  
+  count 5000000
+    do while Avalue andb 3
+      set Avalue ( self * Afactor ) % 2147483647
+    do while Bvalue andb 7
+      set Bvalue ( self * Bfactor ) % 2147483647
+    if (Avalue andb 65535) = (Bvalue andb 65535)
+      inc pass
+          
+  debug "Part 2: ${pass}"
+  
+  
+
+GeneratorSimple process as start, factor    
+  while true
+    set start ( self * factor ) % 2147483647
+    yield start andb 65535
+
+GeneratorMasked process as start, factor, mask
+  while true
+    do while start andb mask
+      set start ( self * factor ) % 2147483647
+    yield start andb 65535
+
+InstantiateGenerative task
+  set 
+    Astart 679
+    Bstart 771
+    Afactor 16807
+    Bfactor 48271
+    
+    parts array
+      array
+        40000000
+        @GeneratorSimple(Astart, Afactor)
+        @GeneratorSimple(Bstart, Bfactor)
+      array
+        5000000
+        from @GeneratorMasked Astart, Afactor, 3
+        from @GeneratorMasked Bstart, Bfactor, 7
+      
+  each parts
+    set pass 0
+    count .0
+      if .1.next().value = .2.next().value
+        inc pass
+    debug "Part ${number key+1}: ${pass}"
+
+

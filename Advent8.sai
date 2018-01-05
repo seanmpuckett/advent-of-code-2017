@@ -1,0 +1,49 @@
+object Advent8 1.0.0
+
+inherit: 'Advent'
+
+Instantiate task
+
+  set source to @ReadFile('Advent8.txt')
+      
+  set
+    rows to source.split(/\r|\n/)
+    registers to blank
+    max to 0
+    
+  each rows 
+    set
+      tokens from .split /\s+/
+      register to tokens.0
+      registers[register] default 0
+      function to tokens.1
+      amount to number tokens.2
+      subject to registers[tokens.4] default 0
+      operator to tokens.5
+      test to number tokens.6
+      pass to false
+
+    if function is 'dec'
+      set amount * -1
+      
+    switch operator
+      case '>'
+        set pass to subject > test
+      case '>='
+        set pass to subject >= test
+      case '<'
+        set pass to subject < test
+      case '<='
+        set pass to subject <= test
+      case '=='
+        set pass to subject = test
+      case '!='
+        set pass to subject != test
+    
+    if pass
+      set 
+        registers[register] + amount
+        max ?> registers[register]
+        
+  debug "Part 1: ${registers values highest .}"
+  debug "Part 2: ${max}"

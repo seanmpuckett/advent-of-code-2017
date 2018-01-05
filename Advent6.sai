@@ -1,0 +1,40 @@
+object Advent6 1.0.0
+
+Instantiate task
+
+  set source:
+    4, 1 ,15, 12, 0, 9, 9, 5, 5, 8, 7, 3, 14, 5 ,12, 3
+
+  set
+    bins source
+    iterations to 0
+    bincount to bins.length
+    seen to blank
+    fingerprint to bins.join(',')
+  
+  until seen[fingerprint]
+    set
+      iterations + 1
+      seen[fingerprint] to iterations
+      hibin to 0
+      hivalue to bins[hibin]
+       
+    each bins as bin 
+      if bin > hivalue
+        set
+          hivalue to bin
+          hibin to number key
+    
+    set bins[hibin] to 0
+    while hivalue
+      set
+        hibin + 1
+        hibin % bincount
+        bins[hibin] + 1
+        hivalue - 1
+        
+    set fingerprint to bins.join(',')
+  
+  debug "Part 1: ${iterations}"
+  debug "Part 2: ${iterations-seen[fingerprint]-1}"
+  

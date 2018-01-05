@@ -1,0 +1,89 @@
+
+// Declare a global variable
+
+reference:
+  Sample 347991
+
+// Object declaration
+
+object Advent3 1.0.0
+
+Instantiate task
+
+  set source ~Sample
+
+  set
+    max 1
+    level 1
+    offset 0
+    indent 0
+    
+  while max < source
+    set 
+      steps level * 8
+      max + steps
+      level + 1
+
+  set 
+    max - steps - 1 
+    level - 1
+    side to level * 2
+  
+  count 4
+    set offset to source - max
+    if max + side > source
+      set 
+        max + (side / 2) - 1
+        indent to max - source
+        indent to ~Math.abs(indent)
+      break
+    set max + side
+
+  debug "Part 1: ${level + indent}"
+  
+  
+  set
+    cells to blank
+    
+    ArrayKey to task as x, y
+      return "${x},${y}"
+    
+    ArraySet to task as x,y,v
+      set cells[ArrayKey(x,y)] to v
+    
+    ArrayValue to task as x, y
+      return cells[ArrayKey(x,y)] default 0
+    
+    ArraySum to task as x, y
+      return ArrayValue(x-1,y-1)+ArrayValue(x,y-1)+ArrayValue(x+1,y-1)+ArrayValue(x-1,y)+
+      ... ArrayValue(x,y)+ArrayValue(x+1,y)+ArrayValue(x-1,y+1)+ArrayValue(x,y+1)+ArrayValue(x+1,y+1)
+    
+    ArrayAdd to task as x, y, num, dx, dy
+      while num
+        set value to ArraySum(x,y)
+        if value > source
+          debug "Part 2: ${value}"
+          ~process.exit
+        ArraySet x, y, value
+        set 
+          num - 1
+          x + dx
+          y + dy
+        
+  ArraySet 0,0,1
+
+  set 
+    mx to 1
+    my to 0
+    size to 2
+  
+  while size < 20
+    ArrayAdd mx, my, size, 0, -1
+    ArrayAdd mx-1, my-size-1, size, -1, 0
+    ArrayAdd mx-size, my-size-2, size, 0, 1
+    ArrayAdd mx-size-1, my+1, size, 1, 0
+    set 
+      mx + 1
+      my + 1
+      size + 2
+    

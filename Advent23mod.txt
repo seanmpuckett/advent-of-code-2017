@@ -1,0 +1,24 @@
+set b 67
+set c b
+jz a main:            
+  mul b 100       // production
+  add b 100000
+  set c b
+  add c 17000
+main: set d 2
+  sqrt x b
+  outer: set j b
+    mod j d
+    jnz j nextd:
+      add h 1
+      jnz h next:
+    nextd: add d 1       
+    set g x       
+    sub g d
+    jnz g outer: 
+  next: set g b 
+  sub g c			
+  jnz g loop:  
+    halt
+  loop: add b 17  
+  jnz 1 main: 

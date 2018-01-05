@@ -1,0 +1,16 @@
+reference:
+  FS require('fs')
+
+object Advent 1.0.0
+
+ReadFile task as filename
+  return ~FS.readFileSync(filename, 'utf8')
+
+ReadFileLines task as filename
+  return @ReadFile(filename).split(/[\r\n]+/)
+  
+Time task as function
+  set t1 new ~Date
+  function
+  set t2 new ~Date
+  debug "Function took ${t2-t1}ms"

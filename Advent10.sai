@@ -1,0 +1,75 @@
+
+// Declare a global variable
+
+reference:
+  FS require('fs')
+  Sample "187,254,0,81,169,219,1,190,19,102,255,56,46,32,2,216"
+  
+// Object declaration
+
+object Advent10 1.0.0
+
+Instantiate task
+
+  // part 1
+  
+  set 
+    pos to 0
+    skip to 0
+    size to 256
+    ring to empty
+    rounds to ~Sample.split(/,/) thru . -0
+
+  count size
+    set ring[counter] to counter
+  
+  set Knot to task as rounds
+    each rounds as len
+      set 
+        local p1 to pos
+        local p2 to pos+len-1
+      count len/2
+        swap ring[p1%size] ring[p2%size]
+        inc p1
+        dec p2
+      set
+        pos + len + skip
+        skip + 1
+
+  Knot rounds
+  
+  debug "Part 1: ${ring[0] * ring[1]}"
+
+  // part 2
+  
+  set 
+    pos to 0
+    skip to 0
+    size to 256
+    ring to empty
+    rounds to chain ~Sample
+      split '' 
+      thru .charCodeAt(0)
+      concat: 17, 31, 73, 47, 23
+  
+  count size
+    set ring[counter] to counter
+
+  count 64
+    Knot rounds
+    
+  set dense to empty
+  count size step 16 as chunk
+    set local hash to 0
+    count chunk to chunk+16 as pos
+      set hash xorb ring[pos%size]
+    dense.push hash
+
+  set OneByteHex to task as val
+    with val.toString(16)
+      if .length = 1
+        return "0" + .
+      return .
+
+  debug "Part 2: " + (dense thru using OneByteHex).join('')
+

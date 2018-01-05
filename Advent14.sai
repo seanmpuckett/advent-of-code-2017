@@ -1,0 +1,97 @@
+reference:
+  FS require('fs')
+
+object Advent14 1.0.0
+
+Instantiate task
+
+  set 
+    puzzle 'ugkiagan'
+    puzzle2 'flqrgnkx'
+    
+  set 
+    disk empty
+    allocated 0
+  
+  count 128
+    set row empty
+    each @KnotHash('${puzzle}-${counter}') as byte
+      set bit 128
+      while bit
+        row.push byte andb bit
+        set bit >> 1
+    set disk[counter] row
+
+  set allocated 0
+  each disk 
+    each .
+      if .
+        inc allocated
+      
+  debug "Part 1: ${allocated}"
+
+  set Fill task as x, y
+    set 
+      local stack array array x, y
+      Check task as x, y
+        if ?disk[x][y] 
+          stack.push array x, y
+    while stack.shift() 
+      set disk[.0][.1] 0
+      Check .0-1, .1
+      Check .0+1, .1
+      Check .0, .1-1
+      Check .0, .1+1
+
+  set groups 0
+
+  count 128 as x
+    count 128 as y
+      if disk[x][y]
+        Fill x,y
+        inc groups
+
+  debug "Part 2: ${groups}"
+  
+  
+KnotHash task as keystring
+  set 
+    pos 0
+    skip 0
+    size 256
+    ring empty
+    rounds chain keystring
+      split '' 
+      thru .charCodeAt(0)
+      concat: 17, 31, 73, 47, 23
+
+  count size
+    set ring[counter] counter
+  
+  set Knot task as rounds
+    each rounds as len
+      set 
+        local p1 pos
+        local p2 pos+len-1
+      count len/2
+        set
+          local temp ring[p1%size]
+          ring[p1%size] ring[p2%size]
+          ring[p2%size] temp
+          p1 + 1
+          p2 - 1
+      set
+        pos + len + skip
+        skip + 1
+
+  count 64
+    Knot rounds
+
+  set dense empty
+  count size step 16 as chunk
+    set local hash 0
+    count chunk to chunk+16 as pos
+      set hash xorb ring[pos]
+    dense.push hash
+
+  return dense

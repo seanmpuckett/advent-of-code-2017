@@ -1,0 +1,39 @@
+object Advent12 1.0.0
+
+inherit: 'Advent'
+
+Instantiate task
+
+  set connections to chain @ReadFile('Advent12.txt')
+    split /\r|\n/ 
+    thru .split(/,?\s+/) 
+    has ?.1 is '<->'
+    thru array .0, .slice(2) 
+    entrait
+
+  set GetConnections to task as root
+    set
+      local visited to blank
+      local nodes to empty
+      local stack to array root
+    while stack.length
+      set local node from stack.shift
+      unless visited[node]
+        set visited[node] to true
+        nodes.push node
+        stack.push.apply stack, connections[node]
+    return nodes
+  
+  debug "Part 1: ${GetConnections(0).length}"
+  
+  set 
+    accessible to blank
+    groups to 0
+    
+  each connections keys as node
+    unless accessible[node]
+      inc groups
+      each GetConnections(node)
+        set accessible[.] to true
+    
+  debug "Part 2: ${groups}"

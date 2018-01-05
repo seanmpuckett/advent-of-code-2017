@@ -1,0 +1,56 @@
+object Advent7 1.0.0
+
+inherit: 'Advent'
+
+Instantiate task
+
+  set
+    source from @ReadFile 'Advent7.txt'
+        
+  set
+    parent to blank
+    children to blank
+    ischild to blank
+    discweight to blank
+    
+  set source to source.replace(/\,|\(|\)/g ,'')
+  
+  each source.split(/\r|\n/) 
+    set 
+      tokens from .split /\s+/
+      root from tokens.shift
+      discweight[root] number from tokens.shift 
+      arrow from tokens.shift
+      parent[root] to 1
+      children[root] to tokens
+    each tokens as token
+      set ischild[token] to 1
+
+  set base to parent has not ischild[key] keys first
+  
+  debug "Part 1: ${base}"
+    
+  set GetWeight to task as node
+    set 
+      local weight to discweight[node]
+      local childweights to blank
+    each children[node] as child
+      set 
+        childweight from GetWeight child
+        weight + childweight
+        childweights[child] to childweight
+    set local weights to childweights values by asc
+    if (weights first) != (weights last) 
+      set 
+        median to (childweights values)[1]
+        bad to (childweights has it!=median) keys first
+      debug "Part 2: ${discweight[bad] - childweights[bad] - median}"
+      ~process.exit(0)
+    return weight 
+
+  GetWeight base
+  
+    
+    
+  
+  

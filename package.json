@@ -1,0 +1,14 @@
+{
+  "name": "@seanmpuckett/advent2017",
+  "version": "1.0.0",
+  "description": "Solutions for Advent of Code 2017, in SAI",
+  "main": "advent.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+  "dependencies": {
+    "sai-language": "0.1.*"
+  }
+}

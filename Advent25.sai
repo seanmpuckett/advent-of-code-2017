@@ -1,0 +1,32 @@
+object Advent25 1.0.0
+
+inherit: Advent
+
+Instantiate task
+
+  set
+    steps 12172063
+    tape blank
+    state 0
+    offset 0
+    rules chain "1RB.0LC/1LA.1LD/1RD.0RC/0LB.0RE/1RC.1LF/1LE.1RA"
+      split '/'
+      thru .split('')
+      thru: 
+        .0*3, .1='R'??1::-1, .2.charCodeAt(0)-65
+        .4*3, .5='R'??1::-1, .6.charCodeAt(0)-65
+
+  set Step task
+    set value tape[offset] default 0
+    with rules[state]
+      set
+        tape[offset] .[value]
+        offset + .[value+1]
+        state .[value+2]
+
+  @Time task
+    count steps
+      Step
+  
+  debug "Part 1: ${(tape has .) count}"
+  

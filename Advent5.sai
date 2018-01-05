@@ -1,0 +1,38 @@
+object Advent5 1.0.0
+
+inherit: 'Advent'
+
+Instantiate task
+
+  set source from @ReadFile 'Advent5.txt'
+
+  set 
+    jumps to source.split(/\s+/g) thru number .
+    steps to 0
+    pc to 0
+    
+  while pc < jumps.length
+    set
+      next to jumps[pc]
+      jumps[pc] + 1
+      pc + next
+      steps + 1
+
+  debug "Part 1: "+steps
+
+  set 
+    jumps to source.split(/\s+/g) thru number .
+    steps to 0
+    pc to 0
+    
+  while pc < jumps.length
+    set
+      next to jumps[pc]
+      jumps[pc] + ( next > 2 ?? -1 :: 1 )
+      pc + next
+      steps + 1
+
+  debug "Part 2: "+steps
+
+
+

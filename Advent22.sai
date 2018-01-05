@@ -1,0 +1,91 @@
+object Advent22 1.0.0
+
+inherit: 'Advent'
+
+Instantiate task
+
+  set 
+    startingtest:
+      '..#'
+      '#..'
+      '...'
+    starting @ReadFileLines('Advent22.txt') has .length > 0
+    width starting.length
+    offset (width-1)/2
+    delta:
+      : 0, -1
+      : 1, 0
+      : 0, 1
+      : -1, 0 
+  
+    GetPixel task as x, y
+      return grid["${x},${y}"] default '.'
+    
+    SetPixel task as x, y, v
+      set grid["${x},${y}"] v
+    
+    DumpGrid task as size
+      set out ''
+      count -size to size as y
+        count -size to size as x
+          set out + GetPixel(x,y)
+        set out + "\n"
+      debug out + "\n"
+      
+    InitGrid task
+      set
+        grid blank
+        px 0
+        py 0
+        facing 0
+        infections 0
+      ply starting as row, y
+        count width as x
+          SetPixel x-offset, y-offset, row.substr(x,1)
+  
+  // part 1
+  
+  InitGrid
+  count 10000
+    if GetPixel(px,py) is '#'
+      SetPixel px, py, '.'
+      inc facing
+    else
+      SetPixel px, py, '#'
+      inc infections
+      dec facing
+    set 
+      facing andb 3
+      px + delta[facing].0
+      py + delta[facing].1
+
+  //DumpGrid 40
+  debug "Part 1: ${infections}"
+
+  // part 2
+
+  InitGrid
+  @Time task
+    count 10000000
+      switch GetPixel(px,py)
+        case '.'
+          dec facing
+          SetPixel px,py,'W'
+        case 'W'
+          inc infections
+          SetPixel px,py,'#'
+        case '#'
+          inc facing
+          SetPixel px,py,'F'
+        case 'F'
+          set facing + 2
+          SetPixel px,py,'.'
+      set 
+        facing andb 3
+        px + delta[facing].0
+        py + delta[facing].1
+
+  //DumpGrid 200
+  debug "Part 2: ${infections}"
+
+  

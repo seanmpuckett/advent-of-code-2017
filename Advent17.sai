@@ -1,0 +1,32 @@
+reference:
+  FS require('fs')
+
+object Advent17 1.0.0
+
+Instantiate task
+
+  set
+    steps 371 // puzzle input
+    buffer array 0
+    value 1
+    position 0
+    
+  count 2017
+    set position ((self + steps) % value) + 1
+    buffer.splice position, 0, value
+    inc value
+  
+  debug "Part 1: ${buffer[position+1]}"
+
+  set
+    buffer1 0
+    value 1
+    position 0
+    
+  count 50000000
+    set position ((self + steps) % value) + 1
+    if position = 1
+      set buffer1 value
+    inc value
+
+  debug "Part 2: ${buffer1}"

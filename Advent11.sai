@@ -1,0 +1,68 @@
+object Advent11 1.0.0
+
+inherit: 'Advent'
+
+Instantiate task
+
+  set puzzle from @ReadFile 'Advent11.txt'
+
+  set
+    Abs to ~Math.abs
+    Sgn to ~Math.sign
+
+    puzzle to self.split(/\,/)
+
+    Move to task as direction, coords
+      with coords
+        switch direction
+          case 'n'
+            inc .y
+            dec .z
+          case 'ne'
+            inc .x
+            dec .z
+          case 'se'
+            inc .x
+            dec .y
+          case 's'
+            dec .y
+            inc .z
+          case 'sw'
+            dec .x
+            inc .z
+          case 'nw'
+            dec .x
+            inc .y
+
+    StepsHome to task as coords
+      set local steps to 0
+      count 2
+        set
+          maxcoord to coords enlist by Abs(.1) desc
+          amount to Abs(maxcoord.1.1)
+          coords[maxcoord.0.0] - amount * Sgn(self)
+          coords[maxcoord.1.0] - amount * Sgn(self)
+          steps + amount
+      return steps
+  
+    HexDistance to task 
+        return (Abs($x)+Abs($y)+Abs($z))/2
+
+    HexPath to task as moves
+      set
+        coords to: x 0, y 0, z 0
+        maxdistance to 0
+        local steps to 0
+      each moves
+        Move ., coords
+        set distance from HexDistance coords
+        if distance>maxdistance
+          set
+            maxcoords to copy coords 
+            maxdistance to distance
+      return: final StepsHome(coords), max StepsHome(maxcoords)
+  
+  set steps from HexPath puzzle
+  debug "Part 1: ${steps.final}"
+  debug "Part 2: ${steps.max}"
+    

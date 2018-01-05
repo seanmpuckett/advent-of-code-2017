@@ -1,0 +1,48 @@
+reference:
+  FS require('fs')
+
+object Advent20 1.0.0
+
+Instantiate task
+
+  set 
+    puzzle chain ~FS.readFileSync('Advent20.txt','utf8') 
+      split /\r|\n/
+      thru .split(/[^\-0-9]+/) thru number .
+      thru array
+        key
+        fields
+          i key
+          p . limit 1,3
+          v . limit 4,3
+          a . limit 7,3
+      entrait
+
+    Manhattan task
+      return $.0 + $.1 + $.2
+    
+    Cartesian task
+      return ~Math.sqrt(($.0*$.0)+($.1*$.1)+($.2*$.2))
+
+    nearest puzzle values by Cartesian(.a) by Cartesian(.v) by Manhattan(.p) first
+
+  debug "Part 1: ${nearest.i}"
+  
+  // part 2 - collisions
+  
+  count 200  // my last collision was at round 38 so this is probably enough for most?
+    set 
+      puzzle delete deletions
+      deletions empty
+      positions blank
+    each puzzle 
+      set hash .p.toString()
+      if positions[hash]
+        set deletions concat array trial, key
+      else
+        set positions[hash] key      
+      count 3
+        set .v[counter] + .a[counter]
+        set .p[counter] + .v[counter]
+      
+  debug "Part 2: ${(puzzle count)}"
